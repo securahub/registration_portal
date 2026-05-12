@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_registration_submission_form" model="ir.ui.view">
+        <field name="name">registration.submission.form</field>
+        <field name="model">registration.submission</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_lead" string="Create Lead" type="object" class="oe_highlight" invisible="state == 'done'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,contacted,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="link_id" readonly="1"/>
+                            <field name="name"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="course"/>
+                            <field name="district"/>
+                        </group>
+                        <group>
+                            <field name="address"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Custom Values">
+                            <field name="value_ids" readonly="1">
+                                <tree>
+                                    <field name="field_id"/>
+                                    <field name="value"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_registration_submission_tree" model="ir.ui.view">
+        <field name="name">registration.submission.tree</field>
+        <field name="model">registration.submission</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="link_id"/>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_registration_submission" model="ir.actions.act_window">
+        <field name="name">Submissions</field>
+        <field name="res_model">registration.submission</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_registration_submission" name="Data" parent="menu_registration_portal_root" sequence="20" groups="base.group_system"/>
+    <menuitem id="menu_registration_submission_action" name="Submissions" parent="menu_registration_submission" action="action_registration_submission"/>
+</odoo>

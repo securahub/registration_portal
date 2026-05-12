@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="registration_form_template" name="Registration Form">
+        <t t-call="website.layout">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                        <div class="card shadow-lg border-0 rounded-3">
+                            <div class="card-header bg-success text-white text-center py-4 rounded-top-3">
+                                <h2 t-field="link.name" class="mb-0"/>
+                            </div>
+                            <div class="card-body p-4 p-md-5">
+                                <div class="mb-4" t-out="link.description"/>
+                                <form action="/registration/submit" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="hidden" name="link_slug" t-att-value="link.slug"/>
+                                    
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label fw-bold">Full Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="name" required="required" placeholder="Enter your full name"/>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <label for="email" class="form-label fw-bold">Email</label>
+                                            <input type="email" class="form-control" name="email" placeholder="name@example.com"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="phone" class="form-label fw-bold">Phone</label>
+                                            <input type="tel" class="form-control" name="phone" placeholder="Your phone number"/>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Dynamic Fields -->
+                                    <t t-foreach="link.field_ids.sorted(key=lambda f: f.sequence)" t-as="field">
+                                        <div class="mb-3">
+                                            <label t-att-for="'custom_field_%s' % field.id" class="form-label fw-bold">
+                                                <t t-esc="field.name"/> 
+                                                <span t-if="field.required" class="text-danger">*</span>
+                                            </label>
+                                            
+                                            <!-- Char -->
+                                            <input t-if="field.field_type == 'char'" type="text" class="form-control" 
+                                                   t-att-name="'custom_field_%s' % field.id" t-att-required="field.required"/>
+                                                   
+                                            <!-- Text -->
+                                            <textarea t-if="field.field_type == 'text'" class="form-control" 
+                                                      t-att-name="'custom_field_%s' % field.id" rows="3" t-att-required="field.required"></textarea>
+
+                                            <!-- Integer -->
+                                            <input t-if="field.field_type == 'integer'" type="number" class="form-control" 
+                                                   t-att-name="'custom_field_%s' % field.id" t-att-required="field.required"/>
+
+                                            <!-- Date -->
+                                            <input t-if="field.field_type == 'date'" type="date" class="form-control" 
+                                                   t-att-name="'custom_field_%s' % field.id" t-att-required="field.required"/>
+                                                   
+                                            <!-- Selection -->
+                                            <select t-if="field.field_type == 'selection'" class="form-select" 
+                                                    t-att-name="'custom_field_%s' % field.id" t-att-required="field.required">
+                                                <option value="">Select...</option>
+                                                <t t-if="field.selection_options">
+                                                    <t t-foreach="field.selection_options.split(',')" t-as="option">
+                                                        <option t-att-value="option.strip()"><t t-esc="option.strip()"/></option>
+                                                    </t>
+                                                </t>
+                                            </select>
+                                        </div>
+                                    </t>
+
+                                    <div class="d-grid gap-2 mt-4">
+                                        <button type="submit" class="btn btn-success btn-lg shadow-sm">Submit Registration</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="registration_success_template" name="Registration Success">
+        <t t-call="website.layout">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                        <div class="card shadow-lg border-0 rounded-3 text-center p-4 p-md-5">
+                            <div class="display-1 text-success mb-3">
+                                <i class="fa fa-check-circle"/>
+                            </div>
+                            <h2 class="mb-3">Thank You!</h2>
+                            <p class="lead text-muted">Your registration for <strong><t t-esc="link.name"/></strong> has been submitted successfully.</p>
+                            
+                            <t t-if="link.program_details or link.program_image">
+                                <hr class="my-4"/>
+                                <div class="text-start">
+                                    <h4 class="mb-3 text-center">Program Details</h4>
+                                    
+                                    <div class="d-flex justify-content-center mb-4" t-if="link.program_image">
+                                        <img t-attf-src="data:image/png;base64,{{ link.program_image.decode('utf-8') }}" class="img-fluid rounded shadow-sm" style="max-height: 300px;"/>
+                                    </div>
+
+                                    <div t-if="link.program_details" t-out="link.program_details"/>
+                                </div>
+                            </t>
+
+                            <div class="mt-4">
+                                <a href="/" class="btn btn-outline-primary shadow-sm">Return to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

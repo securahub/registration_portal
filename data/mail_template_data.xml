@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="registration_email_template" model="mail.template">
+            <field name="name">Registration Confirmation: Zoom Link</field>
+            <field name="model_id" ref="registration_portal.model_registration_submission"/>
+            <field name="subject">Registration Confirmation: {{ object.link_id.name }}</field>
+            <field name="email_from">"{{ object.company_id.name }}" &lt;{{ (object.company_id.email or user.email) }}&gt;</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Hello <t t-out="object.name"/><br/><br/>
+                        Thank you for registering for <strong><t t-out="object.link_id.name"/></strong>.<br/><br/>
+                        Here is the Zoom link for the event:<br/>
+                        <a t-att-href="object.link_id.zoom_link" style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
+                            Join Zoom Meeting
+                        </a><br/><br/>
+                        <t t-if="object.link_id.program_details">
+                            <div style="margin-top: 20px;">
+                                <strong>Program Details:</strong><br/>
+                                <t t-out="object.link_id.program_details"/>
+                            </div>
+                        </t>
+                        <br/>
+                        Best regards,
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>
