@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 class RegistrationSubmission(models.Model):
     _name = 'registration.submission'
@@ -33,6 +33,7 @@ class RegistrationSubmission(models.Model):
         ('kannur', 'Kannur'),
         ('kasaragod', 'Kasaragod'),
     ], string='District')
+    
     company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company)
     state = fields.Selection([
         ('new', 'New'),
@@ -41,6 +42,26 @@ class RegistrationSubmission(models.Model):
     ], string='Status', default='new')
     
     value_ids = fields.One2many('registration.submission.value', 'submission_id', string='Custom Values')
+
+    existing_lead_id = fields.Many2one('leads.logic', string="Existing Lead", compute="_compute_existing_lead", store=False)
+    lead_quality = fields.Char(string="Lead Quality", compute="_compute_existing_lead", store=False)
+
+    @api.depends('phone')
+    def _compute_existing_lead(self):
+        for rec in self:
+            if rec.phone:
+                lead = self.env['leads.logic'].sudo().search([('phone_number', '=', rec.phone)], limit=1)
+                rec.existing_lead_id = lead.id if lead else False
+                if lead and lead.lead_quality:
+                    try:
+                        rec.lead_quality = dict(lead._fields['lead_quality'].selection).get(lead.lead_quality) or lead.lead_quality
+                    except Exception:
+                        rec.lead_quality = lead.lead_quality
+                else:
+                    rec.lead_quality = False
+            else:
+                rec.existing_lead_id = False
+                rec.lead_quality = False
 
     def action_create_lead(self):
         for rec in self:

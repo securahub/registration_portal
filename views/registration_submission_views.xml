@@ -20,6 +20,8 @@
                             <field name="district"/>
                         </group>
                         <group>
+                            <field name="existing_lead_id" invisible="not existing_lead_id"/>
+                            <field name="lead_quality" invisible="not existing_lead_id" widget="badge"/>
                             <field name="address"/>
                         </group>
                     </group>
@@ -47,6 +49,7 @@
                 <field name="name"/>
                 <field name="email"/>
                 <field name="phone"/>
+                <field name="lead_quality" widget="badge" optional="show"/>
                 <field name="state"/>
             </tree>
         </field>
