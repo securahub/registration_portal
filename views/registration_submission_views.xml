@@ -13,6 +13,7 @@
                     <group>
                         <group>
                             <field name="link_id" readonly="1"/>
+                            <field name="submission_date"/>
                             <field name="name"/>
                             <field name="email"/>
                             <field name="phone"/>
@@ -44,7 +45,8 @@
         <field name="name">registration.submission.tree</field>
         <field name="model">registration.submission</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree default_order="create_date desc">
+                <field name="create_date" string="Submission Date" widget="date"/>
                 <field name="link_id"/>
                 <field name="name"/>
                 <field name="email"/>

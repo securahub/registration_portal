@@ -9,6 +9,11 @@ class RegistrationSubmission(models.Model):
     email = fields.Char(string='Email')
     phone = fields.Char(string='Phone')
     address = fields.Text(string='Address')
+    submission_date = fields.Datetime(  # ← NEW
+        string='Submission Date',
+        default=fields.Datetime.now,
+        readonly=True,
+    )
     course = fields.Selection([
         ('ciap', 'CIAP'),
         ('cma_usa', 'CMA USA'),
